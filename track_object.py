@@ -1,9 +1,9 @@
 import numpy as np
 
 from kalman import KalmanFilter
-
+TRACK_ID = 0
 class TrackObject:
-    def __init__(self,mean, track_id): 
+    def __init__(self,mean): 
         """
         Parameters
         ----------
@@ -14,7 +14,8 @@ class TrackObject:
         track_id : int
             Track ID of the object.
         """
-        sensor_error = 50 #plus minus in meters, 3*sigma
+        global TRACK_ID
+        sensor_error = 5 #plus minus in meters, 3*sigma
         dt = 1
         initial_covariance = np.array([ [5**2, 0, 0, 0, 0, 0],
                                         [0, 1**2, 0, 0, 0, 0],
@@ -63,10 +64,10 @@ class TrackObject:
                                     [0,  0, 0, sigma_sensor_box**2]])
 
         self.kf = KalmanFilter(mean, initial_covariance, state_transition_mat, observation_mat, process_noise_cov, sensor_noise_cov)
-        self.track_id = track_id
+        self.track_id = TRACK_ID
         self.hit_vec = []
         self.history = []
-
+        TRACK_ID = TRACK_ID + 1
     def predict(self):
         """
         Predict the state vector and the covariance matrix of the object.
@@ -92,7 +93,8 @@ class TrackObject:
         """
         self.kf.measurement_update(measurement)
         self.hit_vec.append(1)
-        self.history.append(measurement)
+        # print("Meas Shape: ", measurement.squeeze().shape)
+        self.history.append(measurement.squeeze())
 
     def just_update(self):
         """
@@ -107,6 +109,7 @@ class TrackObject:
         """
         self.kf.predict
         self.hit_vec.append(0)
+        # print("Update Shape: ", self.kf.predicted_output.shape)
         self.history.append(self.kf.predicted_output)
 
     def get_state(self):
@@ -121,7 +124,18 @@ class TrackObject:
             State vector of the object.
         """
         return self.kf.state
-    
+    def get_output(self):
+        """
+        Returns the output vector of the object.
+        Parameters
+        ----------
+        None
+        Returns
+        -------
+        numpy.array (mx1)
+            Output vector of the object.
+        """
+        return self.kf.predicted_output
     def get_covariance(self):
         """
         Returns the covariance matrix of the object.
@@ -147,6 +161,7 @@ class TrackObject:
             Track ID of the object.
         """
         return self.track_id
+    
     def get_streak_vector(self):
         """
         Returns the streak vector of the object.
@@ -159,3 +174,29 @@ class TrackObject:
             Streak vector of the object.
         """
         return self.hit_vec
+
+    def get_history(self):
+        """
+        Returns the history of the object.
+        Parameters
+        ----------
+        None
+        Returns
+        -------
+        list
+            History of the object.
+        """
+        return self.history
+    
+    def get_innovation_covariance(self):
+        """
+        Returns the innovation covariance of the object.
+        Parameters
+        ----------
+        None
+        Returns
+        -------
+        numpy.array (mxm)
+            Innovation covariance of the object.
+        """
+        return self.kf.innovation_covariance

@@ -34,10 +34,9 @@ class KalmanFilter(object):
         self.state = initial_state 
         self.state_covariance = inital_state_covariance 
         self.innovation_covariance = np.zeros((self.observation_mat.shape[0], self.observation_mat.shape[0])) # mxm
-        self.predicted_output = []
-        self.ID = TrackID
+        self.predicted_output = None
         self.time_alive = 0
-        TrackID = TrackID + 1
+
 
     def predict(self):
         """
@@ -66,9 +65,13 @@ class KalmanFilter(object):
         ---------
         None
         """
-        kalman_gain = self.state_covariance @ self.observation_mat.transpose() @ np.linalg.inv(self.innovation_cov)
-        self.state = self.state + kalman_gain @ (measurement - self.predicted_output)
-        self.state_covariance = self.state_covariance - kalman_gain @ self.innovation_cov @ kalman_gain.transpose()
+        # print(measurement.shape)
+        measurementt = np.array([measurement[:,0], measurement[:,1], measurement[:,2], measurement[:,3]])
+        measurementt = measurementt.squeeze()
+        kalman_gain = self.state_covariance @ self.observation_mat.transpose() @ np.linalg.inv(self.innovation_covariance)
+        # print(self.state.shape, kalman_gain.shape, measurementt.shape, self.predicted_output.shape)
+        self.state = self.state + kalman_gain @ (measurementt - self.predicted_output)
+        self.state_covariance = self.state_covariance - kalman_gain @ self.innovation_covariance @ kalman_gain.transpose()
 
         
     # def pda_update(self,association):

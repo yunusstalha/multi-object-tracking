@@ -20,7 +20,7 @@ class TrackHolder:
             List of confirmed tracks.
         """
         return self.confirmed_tracks
-
+    
     def get_candidate_tracks(self):
         """
         Returns the list of candidate tracks.
@@ -33,6 +33,19 @@ class TrackHolder:
             List of candidate tracks.
         """
         return self.candidate_tracks
+    def get_all_tracks(self):
+        """
+        Returns the list of all tracks.
+        Parameters
+        ----------
+        None
+        Returns
+        -------
+        list
+            List of all tracks.
+        """
+        return self.confirmed_tracks + self.candidate_tracks
+    
     def get_old_tracks(self):
         """
         Returns the list of old tracks.
@@ -46,7 +59,7 @@ class TrackHolder:
         """
         return self.old_tracks
    
-    def kill_confirmed_tracks(self, track):
+    def kill_confirmed_tracks(self):
         """
         Removes a track from the list of confirmed tracks.
         Parameters
@@ -57,8 +70,8 @@ class TrackHolder:
         -------
         None
         """
-        M = 3
-        N = 3
+        M = 5
+        N = 5
 
         for track in self.confirmed_tracks:
             mn_vector = track.get_streak_vector()
@@ -69,14 +82,13 @@ class TrackHolder:
                 if window.count(0) >= M:
                     self.confirmed_tracks.remove(track)
                     self.old_tracks.append(track)
-                    
+                    break
     def kill_candidate_tracks(self):
         """
         Removes a track from the list of candidate tracks.
         Parameters
         ----------
-        track : TrackObject
-            Track to be removed.
+        None
         Returns
         -------
         None
@@ -92,7 +104,8 @@ class TrackHolder:
                 # Check if the number of 1's in the window is at least M
                 if window.count(0) >= M:
                     self.candidate_tracks.remove(track)
-                    track.set_confirmed(False)
+                    break
+                    # track.set_confirmed(False)
                     
     def add_candidate_track(self, track):
         """
@@ -106,7 +119,8 @@ class TrackHolder:
         None
         """
         self.candidate_tracks.append(track) 
-    def confirm_candidate_track(self):
+
+    def confirm_candidate_tracks(self):
         """
         Confirms a track and adds it to the list of confirmed tracks.
         Parameters
@@ -116,18 +130,20 @@ class TrackHolder:
         -------
         None
         """
-        M = 2
-        N = 3
+        M = 3
+        N = 5
 
         for track in self.candidate_tracks:
             mn_vector = track.get_streak_vector()
             for i in range(len(mn_vector)):
                 # Get the last N samples or less if not enough data
                 window = mn_vector[max(0, i-N+1):i+1]
+                # print(window)
                 # Check if the number of 1's in the window is at least M
                 if window.count(1) >= M:
                     self.confirmed_tracks.append(track)
                     self.candidate_tracks.remove(track)
-                    track.set_confirmed(True)
-                    track.set_track_id(self.track_id_counter)
-                    self.track_id_counter = self.track_id_counter + 1
+                    # track.set_confirmed(True)
+                    # track.set_track_id(self.track_id_counter)
+                    # self.track_id_counter = self.track_id_counter + 1
+                    break
