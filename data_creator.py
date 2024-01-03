@@ -199,7 +199,10 @@ fig = plt.figure(constrained_layout=True, figsize=(15,15))
 grid = plt.GridSpec(1, 1, wspace=0.4, hspace=0.3)
 
 x_y = fig.add_subplot(grid[0,0])
-
+plt.grid(True)
 x_y.plot(clutters_x, clutters_y, marker='x', markersize = 2.5, linestyle = 'None', color = 'r')
 plt.xlim((-3000,3000)),plt.ylim((-3000,3000))
+plt.title("Clutterd Data")
+plt.xlabel("X Position")
+plt.ylabel("Y Position")
 plt.show()

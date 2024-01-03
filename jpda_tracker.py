@@ -289,7 +289,11 @@ from matplotlib import pyplot as plt
 for track in tracks:
     history = track.get_history()
     history = np.array(history)
-    plt.plot(history[:,0], history[:,1])
+    plt.plot(history[:,0], history[:,1], markersize = 5)
 plt.grid(True)
 plt.xlim((-3000,3000)),plt.ylim((-3000,3000))
+plt.title("JPDAF Tracker")
+plt.xlabel("X Position")
+plt.ylabel("Y Position")
+plt.legend(["Track 1", "Track 2", "Track 3", "Track 4", "Track 5"])
 plt.show()
