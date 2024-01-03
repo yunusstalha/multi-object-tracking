@@ -7,15 +7,15 @@ class TrackObject:
         """
         Parameters
         ----------
-        mean : numpy.array (nx1)
+        mean : numpy.ndarray (nx1)
             Initial state of the system.
-        covariance : numpy.array (nxn)
+        covariance : numpy.ndarray (nxn)
             Initial covariance matrix of the system.
         track_id : int
             Track ID of the object.
         """
         global TRACK_ID
-        sensor_error = 5 #plus minus in meters, 3*sigma
+        sensor_error = 15 #plus minus in meters, 3*sigma
         dt = 1
         initial_covariance = np.array([ [5**2, 0, 0, 0, 0, 0],
                                         [0, 1**2, 0, 0, 0, 0],

@@ -11,9 +11,11 @@ P_DET = 0.95
 P_GATE = 0.997
 BETA_FA = 6 / (3000 ** 2) 
 BETA_NT = 3 / 760/(3000 ** 2)
-GATE_THRESHOLD = chi2.ppf(P_GATE, df=6) * 100
-print(GATE_THRESHOLD)
+GATE_THRESHOLD = chi2.ppf(P_GATE, df=6) * 1000
+
+
 all_measurements = np.load("/home/yunusi/git/multi-object-tracking/measurements.npy", allow_pickle=True)
+
 def check_distance(kf_obj, meas):
     return mahalanobis(meas, kf_obj.get_output(), kf_obj.get_innovation_covariance())
 
@@ -22,56 +24,52 @@ def MakeTimeUpdate(tracks):
         track.predict()
     return tracks
 
-# def MakeMeasurementUpdate(tracks, measurements, associations):
-#     track_assoc = []
-#     row_list = associations[0]
-#     column_list = associations[1]
-#     for i in range (0, len(tracks)):
-#         if i in column_list:
-#             track_assoc.append(measurements[row_list[np.where(column_list == i)[0]],:])
-#             np.delete(measurements, row_list[np.where(column_list == i)[0]], 0)
 
-#         else:
-#             track_assoc.append(None)
-#     for i in range(len(column_list)):
-#         np.delete(row_list, np.where(column_list == i)[0], 0)
-#         np.delete(column_list, np.where(column_list == i)[0], 0)
-#     for i in range(len(tracks)):
-#         if track_assoc[i] is not None:
-#             # print(track_assoc[i])
-#             tracks[i].measurement_update(track_assoc[i])
-#         else:
-#             tracks[i].just_update()
-            
+def associate(tracks, measurements):
+    """
+    Associates tracks with measurements.
 
-def associate(tracks,measurements):
-
+    :param tracks: A list of track objects.
+    :param measurements: A list of measurement objects.
+    :return: The result of linear sum assignment on the association matrix.
+    """
     num_tracks = len(tracks)
     num_meas = len(measurements)
-    association_matrix = np.ones((num_meas, num_tracks + num_meas)) * float('inf') 
+    
+    # Initialize the association matrix with infinity
+    association_matrix = np.full((num_meas, num_tracks + num_meas), np.inf)
 
-    for i in range(num_meas):
-        for j in range(num_tracks + num_meas):
-            if j < num_tracks:
-                # print(, measurements[i])
-                dist = check_distance(tracks[j], measurements[i])
-                # print(dist)
+    for meas_index in range(num_meas):
+        for track_index in range(num_tracks + num_meas):
+            if track_index < num_tracks:
+                dist = check_distance(tracks[track_index], measurements[meas_index])
+                
                 if dist < GATE_THRESHOLD:
-                    rv = multivariate_normal([0,0,0,0], tracks[j].get_innovation_covariance())
-                    innovation = measurements[i] - tracks[j].get_output()
-                    association_matrix[i, j] = -np.log(P_DET * rv.pdf(innovation))
+                    track = tracks[track_index]
+                    innovation = measurements[meas_index] - track.get_output()
+                    innovation_covariance = track.get_innovation_covariance()
+                    rv = multivariate_normal([0, 0, 0, 0], innovation_covariance)
+                    association_matrix[meas_index, track_index] = -np.log(P_DET * rv.pdf(innovation))
             else:
-                if i == j - num_tracks:
-                    association_matrix[i, j] = -np.log(BETA_FA + BETA_NT)
-    # print(association_matrix)
+                if meas_index == track_index - num_tracks:
+                    association_matrix[meas_index, track_index] = -np.log(BETA_FA + BETA_NT)
+
     return linear_sum_assignment(association_matrix)
 
 def InitializeTracks(tracks, measurements):
-    for i in range(len(measurements)):
-        mean = measurements[i]
-        mean = np.array([mean[0], 0, mean[1], 0, mean[2], mean[3]])
+    """
+    Initialize track objects for each measurement and append them to the tracks list.
+
+    :param tracks: List of existing track objects.
+    :param measurements: List of measurements, each a tuple or list of values.
+    :return: Updated list of track objects including those initialized from measurements.
+    """
+    for measurement in measurements:
+        # Directly construct the mean array and create a new TrackObject
+        mean = np.array([measurement[0], 0, measurement[1], 0, measurement[2], measurement[3]])
         track = TrackObject(mean)
         tracks.append(track)
+
     return tracks
 
 def main(measurements):
@@ -89,6 +87,8 @@ def main(measurements):
     # MakeMeasurementUpdate(candidate_tracks, measurements, associations)
     row_list = associations[0]
     column_list = associations[1]
+
+
     track_assoc = []
     for i in range (0, len(confirmed_tracks)):
         if i in column_list:
@@ -119,7 +119,7 @@ def main(measurements):
     for i in range (len(confirmed_tracks) + len(candidate_tracks), len(confirmed_tracks) + len(candidate_tracks) + measurements.shape[0]):
         if i in column_list:
             InitializeTracks(candidate_tracks,measurements[row_list[np.where(column_list == i)[0]],:])
-    # InitializeTracks(candidate_tracks, measurements)
+    
     track_holder.kill_confirmed_tracks()
     track_holder.kill_candidate_tracks()
     track_holder.confirm_candidate_tracks()
@@ -136,6 +136,7 @@ for track in tracks:
     # print(history)
     history = np.array(history)
     # print(history.shape)
-    plt.scatter(history[:,0], history[:,1])
-
+    plt.plot(history[:,0], history[:,1])
+plt.grid(True)
+plt.xlim((-3000,3000)),plt.ylim((-3000,3000))
 plt.show()

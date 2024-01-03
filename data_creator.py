@@ -21,8 +21,8 @@ class Process(object):
         return self.X
     
 #%% Initial Params
-sensor_error = 5 #plus minus in meters, 3*sigma
-np.random.seed(18)
+sensor_error = 15 #plus minus in meters, 3*sigma
+np.random.seed(17)
 x0 = np.array([0, 1, 0, 1, 6, 5]) 
 x0_2 = np.array([300, 1, 0, 1, 8, 6]) 
 x0_3 = np.array([-200, 1, -70, 1, 5, 8]) 
@@ -101,7 +101,7 @@ start3 = 500
 duration3 = 250
 
 start4 = 50
-duration4 = 150
+duration4 = 300
 
 start5 = 200
 duration5 = 108
@@ -157,29 +157,29 @@ clutters_x = np.vstack([clutters_x, Y1[0,:]])
 clutters_x = np.vstack([clutters_x, Y2[0,:]])
 clutters_x = np.vstack([clutters_x, Y3[0,:]])
 
-# clutters_x = np.vstack([clutters_x, Y4[0,:]])
-# clutters_x = np.vstack([clutters_x, Y5[0,:]])
+clutters_x = np.vstack([clutters_x, Y4[0,:]])
+clutters_x = np.vstack([clutters_x, Y5[0,:]])
 
 clutters_y = np.vstack([clutters_y, Y1[1,:]])
 clutters_y = np.vstack([clutters_y, Y2[1,:]])
 clutters_y = np.vstack([clutters_y, Y3[1,:]])
 
-# clutters_y = np.vstack([clutters_y, Y4[1,:]])
-# clutters_y = np.vstack([clutters_y, Y5[1,:]])
+clutters_y = np.vstack([clutters_y, Y4[1,:]])
+clutters_y = np.vstack([clutters_y, Y5[1,:]])
 
 clutters_l = np.vstack([clutters_l, Y1[2,:]])
 clutters_l = np.vstack([clutters_l, Y2[2,:]])
 clutters_l = np.vstack([clutters_l, Y3[2,:]])
 
-# clutters_l = np.vstack([clutters_l, Y4[2,:]])
-# clutters_l = np.vstack([clutters_l, Y5[2,:]])
+clutters_l = np.vstack([clutters_l, Y4[2,:]])
+clutters_l = np.vstack([clutters_l, Y5[2,:]])
 
 clutters_w = np.vstack([clutters_w, Y1[3,:]])
 clutters_w = np.vstack([clutters_w, Y2[3,:]])
 clutters_w = np.vstack([clutters_w, Y3[3,:]])
 
-# clutters_w = np.vstack([clutters_w, Y4[3,:]])
-# clutters_w = np.vstack([clutters_w, Y5[3,:]])
+clutters_w = np.vstack([clutters_w, Y4[3,:]])
+clutters_w = np.vstack([clutters_w, Y5[3,:]])
 data_list = []
 for k in range (0, steps - 1):
     x_meas = clutters_x[:,k]
