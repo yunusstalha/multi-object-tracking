@@ -3,11 +3,8 @@ Despite the significant progress in automated tracking of moving objects, tracki
 
 In this work I implemented two popular methods for multi-object tracking in clutter namely, Global Nearest Neighbor (GNN) and Joint Probabilistic Data Association Filter (JPDAF).
 
-###  Global Nearest Neighbor 
-
-Global Nearest Neighbor (GNN) method aims to identify and carry forward the single most probable hypothesis at each scan.
-
-### JPDA
+## Measurmenets
+![ezgif com-speed](https://github.com/yunusstalha/multi-object-tracking/assets/66975290/5b1f2e31-ca73-489e-8217-0e0d78f04d26)
 
 ## Results
 ![Figure 1 - JPDA VS GNN](image.png)
