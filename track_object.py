@@ -66,7 +66,11 @@ class TrackObject:
         self.kf = KalmanFilter(mean, initial_covariance, state_transition_mat, observation_mat, process_noise_cov, sensor_noise_cov)
         self.track_id = TRACK_ID
         self.hit_vec = []
-        self.history = []
+        self.history_time = []
+        self.history_state = []
+        self.history_innov = []
+
+
         TRACK_ID = TRACK_ID + 1
     def predict(self):
         """
@@ -80,7 +84,7 @@ class TrackObject:
         """
         self.kf.predict()
 
-    def measurement_update(self, measurement):
+    def measurement_update(self, measurement, time):
         """
         Update the state vector and the covariance matrix of the object.
         Parameters
@@ -93,10 +97,11 @@ class TrackObject:
         """
         self.kf.measurement_update(measurement)
         self.hit_vec.append(1)
-        # print("Meas Shape: ", measurement.squeeze().shape)
-        self.history.append(measurement.squeeze())
+        self.history_time.append(time)
+        self.history_state.append(self.kf.state)
+        self.history_innov.append(self.kf.innovation_covariance)
 
-    def just_update(self):
+    def just_update(self, time):
         """
         Update the state vector and the covariance matrix of the object.
         Parameters
@@ -107,10 +112,11 @@ class TrackObject:
         -------
         None
         """
-        self.kf.predict
+        self.kf.predict(isJustUpdate=True)
         self.hit_vec.append(0)
-        # print("Update Shape: ", self.kf.predicted_output.shape)
-        self.history.append(self.kf.predicted_output)
+        self.history_time.append(time)
+        self.history_state.append(self.kf.state)
+        self.history_innov.append(self.kf.innovation_covariance)
 
     def get_state(self):
         """
@@ -186,8 +192,11 @@ class TrackObject:
         list
             History of the object.
         """
-        return self.history
-    
+        history_time_array = np.array(self.history_time)
+        history_state_array = np.array(self.history_state)
+        history_innov_array = np.array(self.history_innov)
+        history = np.concatenate((history_time_array.reshape(-1, 1), history_state_array, history_innov_array.reshape(-1, 16)), axis=1)
+        return history    
     def get_innovation_covariance(self):
         """
         Returns the innovation covariance of the object.

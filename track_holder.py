@@ -70,15 +70,15 @@ class TrackHolder:
         -------
         None
         """
-        M = 5
-        N = 5
+        M = 8
+        N = 8
 
         for track in self.confirmed_tracks:
             mn_vector = track.get_streak_vector()
             for i in range(len(mn_vector)):
                 # Get the last N samples or less if not enough data
                 window = mn_vector[max(0, i-N+1):i+1]
-                # Check if the number of 1's in the window is at least M
+                # Check if the number of 0's in the window is at least M
                 if window.count(0) >= M:
                     self.confirmed_tracks.remove(track)
                     self.old_tracks.append(track)
@@ -93,8 +93,8 @@ class TrackHolder:
         -------
         None
         """
-        M = 3
-        N = 3
+        M = 2
+        N = 2
         
         for track in self.candidate_tracks:
             mn_vector = track.get_streak_vector()
@@ -130,8 +130,8 @@ class TrackHolder:
         -------
         None
         """
-        M = 3
-        N = 5
+        M = 2
+        N = 3
 
         for track in self.candidate_tracks:
             mn_vector = track.get_streak_vector()

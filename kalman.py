@@ -38,7 +38,7 @@ class KalmanFilter(object):
         self.time_alive = 0
 
 
-    def predict(self):
+    def predict(self, isJustUpdate=False):
         """
         Process update step of the Kalman filter.
         Paramteres
@@ -50,7 +50,10 @@ class KalmanFilter(object):
         """
         self.state = self.state_transition_mat @ self.state
         self.state_covariance = self.state_transition_mat @ self.state_covariance@ self.state_transition_mat.transpose() + self.process_noise_cov
-        self.innovation_covariance = self.observation_mat @ self.state_covariance @ self.observation_mat.transpose() + self.sensor_noise_cov
+
+        if not isJustUpdate:
+            self.innovation_covariance = self.observation_mat @ self.state_covariance @ self.observation_mat.transpose() + self.sensor_noise_cov
+            
         self.predicted_output = self.observation_mat @ self.state
         self.time_alive = self.time_alive + 1
 
@@ -66,11 +69,11 @@ class KalmanFilter(object):
         None
         """
         # print(measurement.shape)
-        measurementt = np.array([measurement[:,0], measurement[:,1], measurement[:,2], measurement[:,3]])
-        measurementt = measurementt.squeeze()
+        # measurementt = np.array([measurement[:,0], measurement[:,1], measurement[:,2], measurement[:,3]])
+        # measurementt = measurementt.squeeze()
         kalman_gain = self.state_covariance @ self.observation_mat.transpose() @ np.linalg.inv(self.innovation_covariance)
         # print(self.state.shape, kalman_gain.shape, measurementt.shape, self.predicted_output.shape)
-        self.state = self.state + kalman_gain @ (measurementt - self.predicted_output)
+        self.state = self.state + kalman_gain @ (measurement - self.predicted_output)
         self.state_covariance = self.state_covariance - kalman_gain @ self.innovation_covariance @ kalman_gain.transpose()
 
         
