@@ -106,7 +106,11 @@ class TrackHolder:
                     self.candidate_tracks.remove(track)
                     break
                     # track.set_confirmed(False)
-                    
+    def kill_all_tracks(self):
+        for track in self.candidate_tracks:
+            self.candidate_tracks.remove(track)
+        for track in self.confirmed_tracks:
+            self.confirmed_tracks.remove(track)     
     def add_candidate_track(self, track):
         """
         Adds a track to the list of candidate tracks.
