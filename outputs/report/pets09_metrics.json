@@ -1,0 +1,28 @@
+[
+  {
+    "tracker": "gnn",
+    "detections": 4953,
+    "matched_detections": 4750,
+    "coverage": 0.9590147385422976,
+    "tracks": 66,
+    "track_frames": 5801,
+    "unmatched_track_frames": 1051,
+    "mean_track_length": 87.89393939393939,
+    "median_track_length": 37.5,
+    "mean_detection_error": 2.4901176330323844,
+    "mean_acceleration": 2.707875628374445
+  },
+  {
+    "tracker": "jpda",
+    "detections": 4953,
+    "matched_detections": 4646,
+    "coverage": 0.9380173632142136,
+    "tracks": 50,
+    "track_frames": 5561,
+    "unmatched_track_frames": 915,
+    "mean_track_length": 111.22,
+    "median_track_length": 36.0,
+    "mean_detection_error": 4.032830160373622,
+    "mean_acceleration": 1.9062536138290191
+  }
+]

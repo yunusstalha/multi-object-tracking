@@ -1,0 +1,34 @@
+[
+  {
+    "tracker": "gnn",
+    "matched_truth_frames": 446,
+    "truth_frames": 450,
+    "missed_truth_frames": 4,
+    "false_track_frames": 109,
+    "id_switches": 0,
+    "mostly_tracked_ids": {
+      "1": 0,
+      "2": 81,
+      "3": 196,
+      "4": 357
+    },
+    "position_rmse": 3.696623225015879,
+    "mean_position_error": 3.248841275194279
+  },
+  {
+    "tracker": "jpda",
+    "matched_truth_frames": 446,
+    "truth_frames": 450,
+    "missed_truth_frames": 4,
+    "false_track_frames": 107,
+    "id_switches": 0,
+    "mostly_tracked_ids": {
+      "1": 0,
+      "2": 88,
+      "3": 211,
+      "4": 380
+    },
+    "position_rmse": 3.710965325579364,
+    "mean_position_error": 3.257856606860654
+  }
+]

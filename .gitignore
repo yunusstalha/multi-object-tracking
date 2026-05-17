@@ -2,6 +2,12 @@
 __pycache__/
 *.py[cod]
 *$py.class
+outputs/*
+!outputs/report/
+!outputs/report/**
+data/pets09_s2l1/
+data/pets09_s2l1_detection.txt
+data/pets09_s2l1_LICENSE
 
 # C extensions
 *.so
@@ -162,3 +168,5 @@ cython_debug/
 # Some other stuff
 exps
 *.npy
+
+tests/
